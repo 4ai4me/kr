@@ -46,9 +46,9 @@
 
 ## 🚀 GitHub Pages 배포 방법
 
-1. 이 레포를 GitHub에 Push (`https://github.com/planitia4ai/kr`)
+1. 이 레포를 GitHub에 Push (`https://github.com/4ai4me/kr`)
 2. **Settings → Pages → Branch: `main` / `/(root)`** 선택 후 Save
-3. 몇 분 후 **https://planitia4ai.github.io/kr/** 에서 확인
+3. 몇 분 후 **https://4ai4me.github.io/kr/** 에서 확인
 
 ---
 
