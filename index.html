@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>거시기 백과사전 — 한국어의 만능키</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  /* === 기본 리셋 & 루트 변수 === */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:        #1a1008;       /* 먹색 */
+    --hanji:      #f5eedc;       /* 한지 바탕 */
+    --hanji-dark: #ede3c8;       /* 한지 어두운 면 */
+    --red:        #c0392b;       /* 단청 주홍 */
+    --blue:       #1e5f8a;       /* 단청 청색 */
+    --gold:       #b8860b;       /* 금색 포인트 */
+    --gray:       #6b5c45;       /* 먹 중간 톤 */
+    --border:     rgba(26,16,8,0.15);
+  }
+
+  body {
+    background: var(--hanji);
+    /* 한지 질감: 미세 노이즈 느낌의 패턴 */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    padding: 0 0 60px;
+    overflow-x: hidden;
+  }
+
+  /* === 상단 헤더 === */
+  .site-header {
+    width: 100%;
+    text-align: center;
+    padding: 36px 20px 20px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .site-header::before,
+  .site-header::after {
+    content: '◆';
+    position: absolute;
+    bottom: -12px;
+    font-size: 20px;
+    color: var(--red);
+    background: var(--hanji);
+    padding: 0 6px;
+  }
+  .site-header::before { left: calc(50% - 80px); }
+  .site-header::after  { left: calc(50% + 60px); }
+
+  .site-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .site-title em {
+    color: var(--red);
+    font-style: normal;
+  }
+  .site-subtitle {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--gray);
+    letter-spacing: 0.12em;
+  }
+
+  /* === 제어 패널 === */
+  .control-panel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 9px 20px;
+    border: 2px solid var(--ink);
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--hanji);
+  }
+  .btn-primary:hover { background: #3b2a18; }
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-secondary:hover { background: var(--hanji-dark); }
+
+  .page-indicator {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    color: var(--gray);
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+
+  /* === 캐러셀 래퍼 === */
+  .carousel-wrapper {
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .carousel-track-outer {
+    overflow: hidden;
+    width: 360px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 var(--ink), 8px 8px 0 rgba(26,16,8,0.15);
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  /* === 개별 카드 === */
+  .card {
+    width: 360px;
+    min-width: 360px;
+    height: 640px;
+    flex-shrink: 0;
+    background: var(--hanji);
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* 카드 테두리 장식 (단청 느낌 이중 선) */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(26,16,8,0.18);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .card > * { position: relative; z-index: 1; }
+
+  /* === 카드 헤더 영역 === */
+  .card-head { flex-shrink: 0; }
+
+  .tag {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--hanji);
+    background: var(--ink);
+    padding: 3px 9px;
+    border-radius: 2px;
+  }
+  .tag-red   { background: var(--red); }
+  .tag-blue  { background: var(--blue); }
+  .tag-gold  { background: var(--gold); }
+
+  .card-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+    margin-top: 8px;
+    color: var(--ink);
+  }
+  .card-title em {
+    color: var(--red);
+    font-style: normal;
+  }
+  .card-title .sub {
+    font-size: 14px;
+    color: var(--gray);
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--blue) 60%, transparent 100%);
+    margin: 8px 0 6px;
+  }
+
+  /* === 아이템 리스트 === */
+  .list-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 5px;
+    justify-content: space-evenly;
+    overflow: hidden;
+    margin: 4px 0;
+  }
+
+  .item {
+    background: rgba(26,16,8,0.04);
+    border-left: 3px solid var(--red);
+    border-radius: 2px;
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .item.blue-bar  { border-left-color: var(--blue); }
+  .item.gold-bar  { border-left-color: var(--gold); }
+  .item.ink-bar   { border-left-color: var(--ink); }
+  .item.no-bar    { border-left: none; padding-left: 12px; background: rgba(26,16,8,0.06); }
+
+  .item-num {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+  .item-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+  .item-ex {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item-desc {
+    font-size: 9.5px;
+    color: var(--gray);
+    line-height: 1.2;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* === 카드 푸터 === */
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9.5px;
+    color: var(--gray);
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+  .card-footer .footer-title {
+    font-family: 'Noto Serif KR', serif;
+  }
+  .card-footer .page-num {
+    font-weight: 700;
+    color: var(--red);
+    font-size: 11px;
+  }
+
+  /* === 표지 카드 전용 === */
+  .cover-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    gap: 16px;
+  }
+  .cover-big-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .cover-big-title em {
+    color: var(--red);
+    font-style: normal;
+    display: block;
+    font-size: 46px;
+  }
+  .cover-desc {
+    font-size: 12.5px;
+    color: var(--gray);
+    line-height: 1.65;
+    border-left: 3px solid var(--gold);
+    padding-left: 12px;
+  }
+  .cover-points {
+    background: rgba(26,16,8,0.05);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px;
+  }
+  .cover-points-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .cover-points ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cover-points li {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.4;
+    padding-left: 14px;
+    position: relative;
+  }
+  .cover-points li::before {
+    content: '◈';
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-size: 9px;
+    top: 1px;
+  }
+
+  /* === 디코딩 카드 전용 === */
+  .decode-box {
+    background: var(--ink);
+    color: var(--hanji);
+    border-radius: 3px;
+    padding: 18px 14px;
+    text-align: center;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.55;
+    flex-shrink: 0;
+  }
+  .decode-map {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 10px 0 4px;
+  }
+  .decode-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .decode-row .dkey {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 700;
+    color: var(--red);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .decode-row .darrow { color: var(--gold); }
+  .decode-row .dval {
+    color: var(--ink);
+    font-size: 11.5px;
+  }
+  .decode-note {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.6;
+    background: rgba(26,16,8,0.04);
+    border-left: 3px solid var(--blue);
+    padding: 8px 10px;
+    flex-shrink: 0;
+  }
+
+  /* === 결론 카드 전용 === */
+  .conclusion-box {
+    background: var(--ink);
+    color: var(--hanji);
+    border-radius: 3px;
+    padding: 20px 16px;
+    flex-shrink: 0;
+  }
+  .conclusion-box .c-label {
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .conclusion-box .c-main {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .conclusion-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 4px 0;
+  }
+  .conclusion-list .c-item {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.45;
+    padding-left: 16px;
+    position: relative;
+  }
+  .conclusion-list .c-item::before {
+    content: '•';
+    position: absolute;
+    left: 4px;
+    color: var(--red);
+    font-size: 14px;
+    line-height: 1;
+    top: 2px;
+  }
+
+  /* === 네비게이션 화살표 === */
+  .nav-btn {
+    background: var(--ink);
+    color: var(--hanji);
+    border: none;
+    border-radius: 3px;
+    width: 36px;
+    height: 60px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover  { background: var(--red); }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; background: var(--ink); }
+
+  /* === 진행 도트 === */
+  .dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 22px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(26,16,8,0.2);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: none;
+    padding: 0;
+  }
+  .dot.active {
+    background: var(--red);
+    transform: scale(1.3);
+  }
+
+  /* === 하단 다운로드 영역 === */
+  .download-section {
+    margin-top: 36px;
+    text-align: center;
+    padding: 0 20px;
+  }
+  .download-section p {
+    font-size: 11.5px;
+    color: var(--gray);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* === 푸터 === */
+  .site-footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray);
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    letter-spacing: 0.06em;
+  }
+
+  /* === 반응형 === */
+  @media (max-width: 420px) {
+    .carousel-track-outer { width: 100vw; }
+    .card { width: 100vw; min-width: 100vw; }
+    .carousel-track { /* width managed by JS */ }
+    .nav-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 상단 헤더 -->
+  <header class="site-header">
+    <h1 class="site-title">한국어의 만능키<br><em>『거시기』</em> 완전정복</h1>
+    <p class="site-subtitle">LINGUISTIC ARCHIVE · 50選 세부 용법 수록 백과</p>
+  </header>
+
+  <!-- 제어 패널 -->
+  <div class="control-panel">
+    <button class="nav-btn" id="btn-prev" aria-label="이전 카드" onclick="moveCard(-1)">◀</button>
+    <span class="page-indicator" id="page-indicator">1 / 11</span>
+    <button class="nav-btn" id="btn-next" aria-label="다음 카드" onclick="moveCard(1)">▶</button>
+  </div>
+
+  <!-- 캐러셀 -->
+  <div class="carousel-wrapper">
+    <div class="carousel-track-outer" id="track-outer">
+      <div class="carousel-track" id="carousel-track">
+
+        <!-- ═══════════════════════════════ CARD 01 ═══════════════════════════════ -->
+        <div class="card" id="card-1">
+          <div class="card-head">
+            <span class="tag tag-red">LINGUISTIC ARCHIVE</span>
+          </div>
+          <div class="cover-body">
+            <div>
+              <div class="cover-big-title">한국인의<br>만능키<em>『거시기』</em></div>
+              <div class="divider" style="margin-top:12px;"></div>
+              <p class="cover-desc">
+                "거시기가 거시기를 거시기혀서 거시기하냐?"<br>
+                총 50개 세부 용법 전수 수록 백과
+              </p>
+            </div>
+            <div class="cover-points">
+              <div class="cover-points-title">◆ CORE POINTS</div>
+              <ul>
+                <li>한국어 8대 품사 완벽 치환 구조</li>
+                <li>인지·사회 처세·극단 용법 망라</li>
+                <li>학술 및 실생활 코퍼스 50선 완성</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">SWIPE →</span>
+            <span class="page-num">01 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 02 ═══════════════════════════════ -->
+        <div class="card" id="card-2">
+          <div class="card-head">
+            <span class="tag tag-blue">01. 지시 / 대명사</span>
+            <h2 class="card-title">사물·인물·장소 <em>대명사</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">01. 일반 사물 대체</div>
+              <div class="item-ex">"선반 위에 있는 거시기 좀 집어줘"</div>
+              <div class="item-desc">↳ 공구, 리모컨 등 사물</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">02. 설단 현상</div>
+              <div class="item-ex">"그... 파란 뚜껑 달린 거시기!"</div>
+              <div class="item-desc">↳ 제품명, 도구, 상표 대체</div>
+            </div>
+            <div class="item">
+              <div class="item-label">03. 제3자 / 지인 지칭</div>
+              <div class="item-ex">"어제 본 거시기 있잖아, 연락 왔어"</div>
+              <div class="item-desc">↳ 아무개, 그 사람, 특정 지인</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">04. 부부간 대명사</div>
+              <div class="item-ex">"우리 집 거시기는 퇴근 전이여"</div>
+              <div class="item-desc">↳ 남편, 아내, 영감, 마누라</div>
+            </div>
+            <div class="item">
+              <div class="item-label">05. 친족 호칭 얼버무림</div>
+              <div class="item-ex">"저기 거시기 삼촌한테 인사드려라"</div>
+              <div class="item-desc">↳ 호칭이 애매한 먼 친척</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">06. 특정 공간 지칭</div>
+              <div class="item-ex">"오늘 저녁에 거시기에서 모이지?"</div>
+              <div class="item-desc">↳ 약속 장소, 단골 식당</div>
+            </div>
+            <div class="item">
+              <div class="item-label">07. 화제 / 암묵적 사건</div>
+              <div class="item-ex">"말했던 그 거시기는 어찌 됐냐?"</div>
+              <div class="item-desc">↳ 투자 건, 비밀스러운 일</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">DEIXIS &amp; PRONOUNS</span>
+            <span class="page-num">02 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 03 ═══════════════════════════════ -->
+        <div class="card" id="card-3">
+          <div class="card-head">
+            <span class="tag tag-red">02 &amp; 03. 시간·수량 &amp; 동사</span>
+            <h2 class="card-title">수치와 <em>동작 서술</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">08. 시점·시기 대체</div>
+              <div class="item-ex">"우리 작년 거시기 무렵에 만났었지?"</div>
+              <div class="item-desc">↳ 봄철, 명절 무렵, 그맘때</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">09. 금액·수량 대체</div>
+              <div class="item-ex">"그거 한 거시기만 깎아주쇼"</div>
+              <div class="item-desc">↳ 만 원, 얼마간의 에누리</div>
+            </div>
+            <div class="item">
+              <div class="item-label">10. 행동·처신 대체</div>
+              <div class="item-ex">"눈치껏 알아서 잘 거시기해라"</div>
+              <div class="item-desc">↳ 행동하다, 처신하다</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">11. 조작·물리 행위 대체</div>
+              <div class="item-ex">"나사 좀 단단하게 거시기해봐"</div>
+              <div class="item-desc">↳ 조이다, 고정하다</div>
+            </div>
+            <div class="item">
+              <div class="item-label">12. 결과 종결 / 처리</div>
+              <div class="item-ex">"서류 작업은 오후까지 다 거시기해 둘게"</div>
+              <div class="item-desc">↳ 완료하다, 마감하다</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">13. 피동 / 사동 융합</div>
+              <div class="item-ex">"그 문제는 어제부로 다 거시기되어 버렸어"</div>
+              <div class="item-desc">↳ 해결되다, 처리되다</div>
+            </div>
+            <div class="item">
+              <div class="item-label">14. 애정·스킨십 완곡화</div>
+              <div class="item-ex">"신혼인데 오늘 밤에 거시기 해야지"</div>
+              <div class="item-desc">↳ 동침하다, 사랑을 나누다</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">VERBS &amp; NUMERALS</span>
+            <span class="page-num">03 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 04 ═══════════════════════════════ -->
+        <div class="card" id="card-4">
+          <div class="card-head">
+            <span class="tag tag-blue">04. 형용사 / 상태</span>
+            <h2 class="card-title">감정과 <em>상태 묘사</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">15. 난처·민망·서운함</div>
+              <div class="item-ex">"형님한테 그런 말 들으니 참 거시기하네"</div>
+              <div class="item-desc">↳ 난처하다, 민망하다, 섭섭하다</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">16. 어색·부적절한 상황</div>
+              <div class="item-ex">"지금 들어가기에는 분위기가 좀 거시기한데?"</div>
+              <div class="item-desc">↳ 껄끄럽다, 어색하다</div>
+            </div>
+            <div class="item">
+              <div class="item-label">17. 미각·신체 이상</div>
+              <div class="item-ex">"국물 맛이 뭔가 좀 거시기한데?"</div>
+              <div class="item-desc">↳ 싱겁다, 텁텁하다, 이상하다</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">18. 비보·조의 완곡화</div>
+              <div class="item-ex">"그 소식 듣고 마음이 참말로 거시기했소"</div>
+              <div class="item-desc">↳ 비통하다, 착잡하다, 먹먹하다</div>
+            </div>
+            <div class="item">
+              <div class="item-label">19. 자조·겸양 표현</div>
+              <div class="item-ex">"내가 배운 게 없어서 좀 거시기하제"</div>
+              <div class="item-desc">↳ 부족하다, 부끄럽다</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">20. 눈치 보기 / 권력 심기</div>
+              <div class="item-ex">"김 부장님 심기가 오늘 좀 거시기하신가 봅니다"</div>
+              <div class="item-desc">↳ 불편하다, 저기압이다</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">ADJECTIVES &amp; STATES</span>
+            <span class="page-num">04 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 05 ═══════════════════════════════ -->
+        <div class="card" id="card-5">
+          <div class="card-head">
+            <span class="tag tag-gold">05. 부사 / 수식어</span>
+            <h2 class="card-title">정도와 <em>상태 수식</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">21. 불명확한 상태 묘사</div>
+              <div class="item-ex">"일이 거시기하게 꼬여버렸구먼"</div>
+              <div class="item-desc">↳ 묘하게, 이상하게, 복잡하게</div>
+            </div>
+            <div class="item gold-bar">
+              <div class="item-label">22. 극단적 정도 강조</div>
+              <div class="item-ex">"날씨가 오늘따라 참 거시기하게 춥네잉"</div>
+              <div class="item-desc">↳ 유난히, 대단히, 지독하게</div>
+            </div>
+            <div class="item">
+              <div class="item-label">23. 냉소 / 비꼼</div>
+              <div class="item-ex">"참으로 거시기하게 잘~ 노신다"</div>
+              <div class="item-desc">↳ 한심하게, 꼴불견으로</div>
+            </div>
+            <div class="item gold-bar">
+              <div class="item-label">24. 움직임·소리 흉내</div>
+              <div class="item-ex">"자동차가 덜컹거리면서 거시기 거시기 가더라고"</div>
+              <div class="item-desc">↳ 비틀비틀, 털털거리며</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">ADVERBIAL USE</span>
+            <span class="page-num">05 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 06 ═══════════════════════════════ -->
+        <div class="card" id="card-6">
+          <div class="card-head">
+            <span class="tag tag-blue">06. 담화 표지 / 대화 조절</span>
+            <h2 class="card-title">대화의 <em>호흡과 조율</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">25. 시간 벌기 (Filler word)</div>
+              <div class="item-ex">"거시기... 내가 하려던 말이 뭐였더라?"</div>
+              <div class="item-desc">↳ 음..., 저기..., 있잖아...</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">26. 발화권 유지 (Turn-holding)</div>
+              <div class="item-ex">"거시기, 그러니까 내 말은, 거시기..."</div>
+              <div class="item-desc">↳ 침묵으로 인한 대화 주도권 상실 방지</div>
+            </div>
+            <div class="item">
+              <div class="item-label">27. 주의 환기 / 호출</div>
+              <div class="item-ex">"거시기, 자네 이리 와서 이것 좀 보게"</div>
+              <div class="item-desc">↳ 여보게, 저기요, 이봐</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">28. 맞장구 / 공감</div>
+              <div class="item-ex">"아따, 거 참 거시기하구먼!"</div>
+              <div class="item-desc">↳ 그러게 말이다, 참 난감하네</div>
+            </div>
+            <div class="item">
+              <div class="item-label">29. 문장 연결</div>
+              <div class="item-ex">"밥 먹고, 거시기해서, 바로 출발하자"</div>
+              <div class="item-desc">↳ 그러고 나서, 정리되는 대로</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">30. 대화 종결 / 체념</div>
+              <div class="item-ex">"에라, 아무튼 그냥 거시기다, 거시기"</div>
+              <div class="item-desc">↳ 될 대로 되라, 그쯤 해두자</div>
+            </div>
+            <div class="item">
+              <div class="item-label">31. 되묻기 (확인)</div>
+              <div class="item-ex">"응? 뭐라고? 방금 거시기가 어쨌다고?"</div>
+              <div class="item-desc">↳ 다시 말해봐, 방금 그 말이</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">DISCOURSE MARKERS</span>
+            <span class="page-num">06 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 07 ═══════════════════════════════ -->
+        <div class="card" id="card-7">
+          <div class="card-head">
+            <span class="tag tag-red">07. 사회적 화용 기제</span>
+            <h2 class="card-title">체면을 지키는 <em>처세술</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container" style="gap: 3px;">
+            <div class="item" style="padding: 4px 10px;">
+              <div class="item-label">32. 거절 / 난색 표명</div>
+              <div class="item-ex">"아, 이번 부탁은 내가 참 거시기허네"</div>
+              <div class="item-desc">↳ 곤란하다, 들어주기 어렵다</div>
+            </div>
+            <div class="item blue-bar" style="padding: 4px 10px;">
+              <div class="item-label">33. 신체·성적 은어</div>
+              <div class="item-ex">"바지 앞춮 거시기 쪽에 뭐가 묻었다"</div>
+              <div class="item-desc">↳ 특정 신체 부위, 성기</div>
+            </div>
+            <div class="item" style="padding: 4px 10px;">
+              <div class="item-label">34. 욕설·비난 순화</div>
+              <div class="item-ex">"아오, 저 거시기한 놈 진짜 말 안 듣네"</div>
+              <div class="item-desc">↳ 얄미운, 빌어먹을, 괘씸한</div>
+            </div>
+            <div class="item gold-bar" style="padding: 4px 10px;">
+              <div class="item-label">35. 칭찬의 완곡화</div>
+              <div class="item-ex">"자네 이번에 솜씨가 아주 참 거시기하구먼!"</div>
+              <div class="item-desc">↳ 대단하다, 훌륭하다</div>
+            </div>
+            <div class="item" style="padding: 4px 10px;">
+              <div class="item-label">36. 면피 / 책임 회피</div>
+              <div class="item-ex">"그건 팀장님이랑 알아서 거시기한 걸로 합시다"</div>
+              <div class="item-desc">↳ 결정하다, 조율하다</div>
+            </div>
+            <div class="item blue-bar" style="padding: 4px 10px;">
+              <div class="item-label">37. 행동 유예 (시간 끌기)</div>
+              <div class="item-ex">"그건 나중에 분위기 봐서 슬슬 거시기하자"</div>
+              <div class="item-desc">↳ 천천히 결정하자, 미루자</div>
+            </div>
+            <div class="item" style="padding: 4px 10px;">
+              <div class="item-label">38. 침묵 담합</div>
+              <div class="item-ex">"(눈 마주치며) 그건 그냥 거시기한 걸로 하자"</div>
+              <div class="item-desc">↳ 덮어두자, 없던 일로 하자</div>
+            </div>
+            <div class="item gold-bar" style="padding: 4px 10px;">
+              <div class="item-label">39. 법적·도덕적 미완결</div>
+              <div class="item-ex">"내가 굳이 입 밖으로 거시기하진 않겠네만..."</div>
+              <div class="item-desc">↳ 고발하다, 폭로하다 (경고)</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">PRAGMATICS</span>
+            <span class="page-num">07 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 08 ═══════════════════════════════ -->
+        <div class="card" id="card-8">
+          <div class="card-head">
+            <span class="tag tag-blue">08. 상호작용 / 심리</span>
+            <h2 class="card-title">암묵지와 <em>인지 최적화</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">40. 암묵지 강요</div>
+              <div class="item-ex">"자네는 내가 뭘 거시기하라는지 감이 안 오나?"</div>
+              <div class="item-desc">↳ 요구·지시 사항 알아서 판단</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">41. 내집단 식별 (Shibboleth)</div>
+              <div class="item-ex">"자네, 그때 그 거시기 뜻을 알겄는가?"</div>
+              <div class="item-desc">↳ 내부자 암묵지 공유 확인</div>
+            </div>
+            <div class="item">
+              <div class="item-label">42. 동조 유도 (Backchannel)</div>
+              <div class="item-ex">"알제? 우리 그때 그거, 참 거시기했잖여"</div>
+              <div class="item-desc">↳ '맞지?' 동조 강제</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">43. 인지 부하 차단 (Load Shedding)</div>
+              <div class="item-ex">"공식에서 분모에 거시기를 넣고 미분하면..."</div>
+              <div class="item-desc">↳ 변수 생략 (뇌 연산 집중)</div>
+            </div>
+            <div class="item">
+              <div class="item-label">44. 능청스런 언어유희</div>
+              <div class="item-ex">"내가 널 얼마나 거시기하는지 알기나 하냐?"</div>
+              <div class="item-desc">↳ 사랑하는지, 아끼는지 (고백)</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">45. 단답형 상황 요약</div>
+              <div class="item-ex">"(어떻게 됐어? 물음에) ...거시기혔다"</div>
+              <div class="item-desc">↳ 망했다 / 해결됐다 (한숨/표정)</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">INTERACTION &amp; PSYCHOLOGY</span>
+            <span class="page-num">08 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 09 ═══════════════════════════════ -->
+        <div class="card" id="card-9">
+          <div class="card-head">
+            <span class="tag tag-red">09. 특수 / 극단 용법</span>
+            <h2 class="card-title">언어의 <em>경계를 넘어</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="list-container">
+            <div class="item">
+              <div class="item-label">46. 제스처 위임</div>
+              <div class="item-ex">"(턱을 치켜들며) 야, 저기 저 거시기..."</div>
+              <div class="item-desc">↳ 턱짓이 가리키는 대상</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">47. 고유명사 접두·접미</div>
+              <div class="item-ex">"거시기 정형외과", "거시기 과장"</div>
+              <div class="item-desc">↳ 특정 병원, 직급만 아는 인물</div>
+            </div>
+            <div class="item">
+              <div class="item-label">48. 자기 참조 (Recursive)</div>
+              <div class="item-ex">"그 왜 있잖아, 그 거시기 있잖여, 거시기!"</div>
+              <div class="item-desc">↳ '거시기'라는 단어 자체</div>
+            </div>
+            <div class="item blue-bar">
+              <div class="item-label">49. 초극단 맥락어</div>
+              <div class="item-ex">"거시기가 거시기를 거시기혀서 거시기하냐?"</div>
+              <div class="item-desc">↳ 전 문장 성분의 완전 대체</div>
+            </div>
+            <div class="item">
+              <div class="item-label">50. 노동요 / 여음구</div>
+              <div class="item-ex">"얼씨구 절씨구 거시기 들어간다~"</div>
+              <div class="item-desc">↳ 박자 및 흥 돋우기</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">EDGE CASES</span>
+            <span class="page-num">09 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 10 ═══════════════════════════════ -->
+        <div class="card" id="card-10">
+          <div class="card-head">
+            <span class="tag tag-gold">SPECIAL ANALYSIS</span>
+            <h2 class="card-title">전설의 문장 <em>디코딩</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="decode-box">
+            "거시기가 거시기를<br>거시기혀서 거시기하냐?"
+          </div>
+          <div class="decode-map">
+            <div class="decode-row"><span class="dkey">거시기가</span><span class="darrow">──▶</span><span class="dval">그 사람이 (주어)</span></div>
+            <div class="decode-row"><span class="dkey">거시기를</span><span class="darrow">──▶</span><span class="dval">그 일을 (목적어)</span></div>
+            <div class="decode-row"><span class="dkey">거시기혀서</span><span class="darrow">──▶</span><span class="dval">그따위로 처리해서 (동사)</span></div>
+            <div class="decode-row"><span class="dkey">거시기하냐?</span><span class="darrow">──▶</span><span class="dval">기분이 상했느냐? (형용사)</span></div>
+          </div>
+          <div class="decode-note">
+            화자와 청자의 물리적 시공간과 암묵지 공유도가 100%일 때 완성되는 한국어만의 초압축 통신 구조입니다.
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">DECODING MODEL</span>
+            <span class="page-num">10 / 11</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════ CARD 11 ═══════════════════════════════ -->
+        <div class="card" id="card-11">
+          <div class="card-head">
+            <span class="tag">CONCLUSION</span>
+            <h2 class="card-title">단어가 아닌<br><em>'포인터(Pointer)'</em></h2>
+            <div class="divider"></div>
+          </div>
+          <div class="conclusion-box">
+            <div class="c-label">◆ ARCHIVE SUMMARY</div>
+            <div class="c-main">
+              거시기는 사전 속 고정된 뜻에 갇히지 않고,<br>
+              둘 사이에 공유된 맥락의 주소를 즉시 가리키는<br>
+              <strong style="color:#c9a227;">한국어의 와일드카드</strong>입니다.
+            </div>
+          </div>
+          <div class="conclusion-list">
+            <div class="c-item">50개 전수 용법으로 입증된 초맥락성</div>
+            <div class="c-item">8대 품사를 넘나드는 언어적 유연성</div>
+            <div class="c-item">표정과 침묵까지 치환하는 완전한 그릇</div>
+          </div>
+          <div class="card-footer">
+            <span class="footer-title">ARCHIVE COMPLETED</span>
+            <span class="page-num">11 / 11</span>
+          </div>
+        </div>
+
+      </div><!-- /carousel-track -->
+    </div><!-- /carousel-track-outer -->
+  </div><!-- /carousel-wrapper -->
+
+  <!-- 진행 도트 -->
+  <div class="dots" id="dots-container" role="tablist" aria-label="카드 선택"></div>
+
+  <!-- 다운로드 -->
+  <div class="download-section">
+    <button class="btn btn-primary" id="btn-download" onclick="downloadAllCards()">
+      📸 11장 이미지 일괄 다운로드 (PNG)
+    </button>
+    <p>각 카드를 고해상도(2배율) PNG로 저장합니다.<br>브라우저 다운로드 허용이 필요할 수 있습니다.</p>
+  </div>
+
+  <!-- 사이트 푸터 -->
+  <footer class="site-footer">
+    거시기 백과사전 · LINGUISTIC ARCHIVE · 50選 용법 수록
+  </footer>
+
+<script>
+  /* ══════════════════════════════════════════════
+     캐러셀 로직
+  ══════════════════════════════════════════════ */
+  const TOTAL = 11;
+  let current = 0;   // 0-indexed
+  let startX = 0;
+  let isDragging = false;
+
+  const track    = document.getElementById('carousel-track');
+  const prevBtn  = document.getElementById('btn-prev');
+  const nextBtn  = document.getElementById('btn-next');
+  const indicator= document.getElementById('page-indicator');
+  const dotsWrap = document.getElementById('dots-container');
+
+  // 도트 생성
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `카드 ${i + 1}`);
+    dot.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(dot);
+  }
+
+  function updateUI() {
+    // 트랙 이동 (100% = 카드 한 장 폭)
+    track.style.transform = `translateX(-${current * 360}px)`;
+
+    // 반응형: 모바일에서 100vw 기준으로 이동
+    const cardW = document.querySelector('.card').offsetWidth;
+    track.style.transform = `translateX(-${current * cardW}px)`;
+
+    // 인디케이터
+    indicator.textContent = `${current + 1} / ${TOTAL}`;
+
+    // 버튼
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === TOTAL - 1;
+
+    // 도트
+    dotsWrap.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(TOTAL - 1, idx));
+    updateUI();
+  }
+
+  function moveCard(dir) { goTo(current + dir); }
+
+  // 키보드 네비게이션
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft')  moveCard(-1);
+    if (e.key === 'ArrowRight') moveCard(1);
+  });
+
+  // 터치 스와이프
+  const outer = document.getElementById('track-outer');
+  outer.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  }, { passive: true });
+  outer.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) moveCard(diff > 0 ? 1 : -1);
+    isDragging = false;
+  });
+
+  // 마우스 드래그
+  outer.addEventListener('mousedown', (e) => { startX = e.clientX; isDragging = true; });
+  outer.addEventListener('mouseup',   (e) => {
+    if (!isDragging) return;
+    const diff = startX - e.clientX;
+    if (Math.abs(diff) > 40) moveCard(diff > 0 ? 1 : -1);
+    isDragging = false;
+  });
+  outer.addEventListener('mouseleave', () => { isDragging = false; });
+
+  // 초기화
+  updateUI();
+
+  /* ══════════════════════════════════════════════
+     PNG 일괄 다운로드
+  ══════════════════════════════════════════════ */
+  async function downloadAllCards() {
+    const btn = document.getElementById('btn-download');
+    btn.textContent = '⏳ 캡처 및 다운로드 진행 중...';
+    btn.disabled = true;
+
+    // 폰트 로드 완료 보장
+    await document.fonts.ready;
+
+    for (let i = 1; i <= TOTAL; i++) {
+      const cardEl = document.getElementById(`card-${i}`);
+      const canvas = await html2canvas(cardEl, {
+        scale: 2,
+        backgroundColor: '#f5eedc',
+        useCORS: true,
+        logging: false,
+      });
+      const link = document.createElement('a');
+      link.download = `거시기_card_${String(i).padStart(2, '0')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      await new Promise(r => setTimeout(r, 700));
+    }
+
+    btn.textContent = '✅ 11장 다운로드 완료!';
+    setTimeout(() => {
+      btn.textContent = '📸 11장 이미지 일괄 다운로드 (PNG)';
+      btn.disabled = false;
+    }, 3000);
+  }
+</script>
+
+</body>
+</html>

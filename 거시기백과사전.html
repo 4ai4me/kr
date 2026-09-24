@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>거시기 카드뉴스 이미지 추출기</title>
+<!-- 이미지 캡처 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+  body { background-color: #030712; display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 40px 10px; }
+
+  /* 상단 제어 바 */
+  .control-panel {
+    position: sticky; top: 20px; z-index: 1000;
+    background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px);
+    border: 1px solid #38BDF8; padding: 12px 24px; border-radius: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
+  .btn-download {
+    background: #38BDF8; color: #0F172A; font-weight: 800; font-size: 15px;
+    border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;
+  }
+  .btn-download:hover { background: #7dd3fc; }
+
+  /* 9:16 모바일 세로 카드 규격 */
+  .card {
+    width: 360px; height: 640px;
+    background: radial-gradient(circle at top right, #1E293B, #0F172A 85%);
+    border-radius: 28px; padding: 22px 18px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;
+    overflow: hidden !important;
+  }
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; color: #38BDF8; letter-spacing: 1.2px; text-transform: uppercase; background: rgba(56,189,248,0.1); padding: 3px 8px; border-radius: 10px; border: 1px solid rgba(56,189,248,0.25); }
+  .title { font-size: 19px; font-weight: 800; line-height: 1.3; margin-top: 5px; color: #FFF; }
+  .title span { color: #38BDF8; }
+  .list-container { display: flex; flex-direction: column; justify-content: space-between; flex: 1; margin: 8px 0; gap: 4px; overflow: hidden !important; }
+  .item { background: rgba(30,41,59,0.7); border-radius: 8px; padding: 5px 9px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; }
+  .item-header { font-size: 9.5px; font-weight: 700; color: #F59E0B; line-height: 1.2; }
+  .item-ex { font-size: 11.5px; font-weight: 600; color: #F1F5F9; line-height: 1.25; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-desc { font-size: 9.5px; color: #94A3B8; line-height: 1.2; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .footer { display: flex; justify-content: space-between; font-size: 10px; color: #64748B; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
+</style>
+</head>
+<body>
+
+  <div class="control-panel">
+    <button class="btn-download" onclick="downloadAllCards()">📸 11장 이미지 일괄 다운로드 (PNG)</button>
+  </div>
+
+  <!-- CARD 01 -->
+  <div class="card" id="card-1">
+    <div><span class="tag">LINGUISTIC ARCHIVE</span><h1 class="title" style="font-size: 28px; margin-top: 20px;">한국인의 만능키<br><span>『거시기』</span> 완전정복</h1><p style="color: #94A3B8; font-size: 13px; margin-top: 12px; line-height: 1.5;">"거시기가 거시기를 거시기혀서 거시기하냐?"<br>총 50개 세부 용법 전수 수록 백과</p></div>
+    <div class="item" style="border-color: #38BDF8; background: rgba(56,189,248,0.06); padding: 18px 14px;"><div style="font-size: 12.5px; font-weight: 700; color: #38BDF8; margin-bottom: 8px;">CORE POINTS</div><div style="font-size: 12.5px; line-height: 1.6;">• 한국어 8대 품사 완벽 치환 구조<br>• 인지·사회 처세·극단 용법 망라<br>• 학술 및 실생활 코퍼스 50선 완성</div></div>
+    <div class="footer"><span>SWIPE UP ↑</span><span>01 / 11</span></div>
+  </div>
+
+  <!-- CARD 02 -->
+  <div class="card" id="card-2">
+    <div><span class="tag">01. 지시 / 대명사</span><h2 class="title">사물·인물·장소 <span>대명사</span></h2></div>
+    <div class="list-container">
+      <div class="item"><div class="item-header">01. 일반 사물 대체</div><div class="item-ex">"선반 위에 있는 거시기 좀 집어줘"</div><div class="item-desc">↳ 공구, 리모컨 등 사물</div></div>
+      <div class="item"><div class="item-header">02. 설단 현상</div><div class="item-ex">"그... 파란 뚜껑 달린 거시기!"</div><div class="item-desc">↳ 제품명, 도구, 상표 대체</div></div>
+      <div class="item"><div class="item-header">03. 제3자 / 지인 지칭</div><div class="item-ex">"어제 본 거시기 있잖아, 연락 왔어"</div><div class="item-desc">↳ 아무개, 그 사람, 특정 지인</div></div>
+      <div class="item"><div class="item-header">04. 부부간 대명사</div><div class="item-ex">"우리 집 거시기는 퇴근 전이여"</div><div class="item-desc">↳ 남편, 아내, 영감, 마누라</div></div>
+      <div class="item"><div class="item-header">05. 친족 호칭 얼버무림</div><div class="item-ex">"저기 거시기 삼촌한테 인사드려라"</div><div class="item-desc">↳ 호칭이 애매한 먼 친척</div></div>
+      <div class="item"><div class="item-header">06. 특정 공간 지칭</div><div class="item-ex">"오늘 저녁에 거시기에서 모이지?"</div><div class="item-desc">↳ 약속 장소, 단골 식당</div></div>
+      <div class="item"><div class="item-header">07. 화제 / 암묵적 사건</div><div class="item-ex">"말했던 그 거시기는 어찌 됐냐?"</div><div class="item-desc">↳ 투자 건, 비밀스러운 일</div></div>
+    </div>
+    <div class="footer"><span>DEIXIS & PRONOUNS</span><span>02 / 11</span></div>
+  </div>
+
+  <!-- CARD 03 -->
+  <div class="card" id="card-3">
+    <div><span class="tag">02 & 03. 시간·수량 & 동사</span><h2 class="title">수치와 <span>동작 서술</span></h2></div>
+    <div class="list-container">
+      <div class="item"><div class="item-header">08. 시점·시기 대체</div><div class="item-ex">"우리 작년 거시기 무렵에 만났었지?"</div><div class="item-desc">↳ 봄철, 명절 무렵, 그맘때</div></div>
+      <div class="item"><div class="item-header">09. 금액·수량 대체</div><div class="item-ex">"그거 한 거시기만 깎아주쇼"</div><div class="item-desc">↳ 만 원, 얼마간의 에누리</div></div>
+      <div class="item"><div class="item-header">10. 행동·처신 대체</div><div class="item-ex">"눈치껏 알아서 잘 거시기해라"</div><div class="item-desc">↳ 행동하다, 처신하다</div></div>
+      <div class="item"><div class="item-header">11. 조작·물리 행위 대체</div><div class="item-ex">"나사 좀 단단하게 거시기해봐"</div><div class="item-desc">↳ 조이다, 고정하다</div></div>
+      <div class="item"><div class="item-header">12. 결과 종결 / 처리</div><div class="item-ex">"서류 작업은 오후까지 다 거시기해 둘게"</div><div class="item-desc">↳ 완료하다, 마감하다</div></div>
+      <div class="item"><div class="item-header">13. 피동 / 사동 융합</div><div class="item-ex">"그 문제는 어제부로 다 거시기되어 버렸어"</div><div class="item-desc">↳ 해결되다, 처리되다</div></div>
+      <div class="item"><div class="item-header">14. 애정·스킨십 완곡화</div><div class="item-ex">"신혼인데 오늘 밤에 거시기 해야지"</div><div class="item-desc">↳ 동침하다, 사랑을 나누다</div></div>
+    </div>
+    <div class="footer"><span>VERBS & NUMERALS</span><span>03 / 11</span></div>
+  </div>
+
+  <!-- CARD 04 -->
+  <div class="card" id="card-4">
+    <div><span class="tag">04. 형용사 / 상태</span><h2 class="title">감정과 <span>상태 묘사</span></h2></div>
+    <div class="list-container">
+      <div class="item"><div class="item-header">15. 난처·민망·서운함</div><div class="item-ex">"형님한테 그런 말 들으니 참 거시기하네"</div><div class="item-desc">↳ 난처하다, 민망하다, 섭섭하다</div></div>
+      <div class="item"><div class="item-header">16. 어색·부적절한 상황</div><div class="item-ex">"지금 들어가기에는 분위기가 좀 거시기한데?"</div><div class="item-desc">↳ 껄끄럽다, 어색하다</div></div>
+      <div class="item"><div class="item-header">17. 미각·신체 이상</div><div class="item-ex">"국물 맛이 뭔가 좀 거시기한데?"</div><div class="item-desc">↳ 싱겁다, 텁텁하다, 이상하다</div></div>
+      <div class="item"><div class="item-header">18. 비보·조의 완곡화</div><div class="item-ex">"그 소식 듣고 마음이 참말로 거시기했소"</div><div class="item-desc">↳ 비통하다, 착잡하다, 먹먹하다</div></div>
+      <div class="item"><div class="item-header">19. 자조·겸양 표현</div><div class="item-ex">"내가 배운 게 없어서 좀 거시기하제"</div><div class="item-desc">↳ 부족하다, 부끄럽다</div></div>
+      <div class="item"><div class="item-header">20. 눈치 보기 / 권력 심기</div><div class="item-ex">"김 부장님 심기가 오늘 좀 거시기하신가 봅니다"</div><div class="item-desc">↳ 불편하다, 저기압이다</div></div>
+    </div>
+    <div class="footer"><span>ADJECTIVES & STATES</span><span>04 / 11</span></div>
+  </div>
+
+  <!-- CARD 05 -->
+  <div class="card" id="card-5">
+    <div><span class="tag">05. 부사 / 수식어</span><h2 class="title">정도와 <span>상태 수식</span></h2></div>
+    <div class="list-container" style="justify-content: space-around;">
+      <div class="item" style="padding: 10px 10px;"><div class="item-header">21. 불명확한 상태 묘사</div><div class="item-ex">"일이 거시기하게 꼬여버렸구먼"</div><div class="item-desc">↳ 묘하게, 이상하게, 복잡하게</div></div>
+      <div class="item" style="padding: 10px 10px;"><div class="item-header">22. 극단적 정도 강조</div><div class="item-ex">"날씨가 오늘따라 참 거시기하게 춥네잉"</div><div class="item-desc">↳ 유난히, 대단히, 지독하게</div></div>
+      <div class="item" style="padding: 10px 10px;"><div class="item-header">23. 냉소 / 비꼼</div><div class="item-ex">"참으로 거시기하게 잘~ 노신다"</div><div class="item-desc">↳ 한심하게, 꼴불견으로</div></div>
+      <div class="item" style="padding: 10px 10px;"><div class="item-header">24. 움직임·소리 흉내</div><div class="item-ex">"자동차가 덜컹거리면서 거시기 거시기 가더라고"</div><div class="item-desc">↳ 비틀비틀, 털털거리며</div></div>
+    </div>
+    <div class="footer"><span>ADVERBIAL USE</span><span>05 / 11</span></div>
+  </div>
+
+  <!-- CARD 06 -->
+  <div class="card" id="card-6">
+    <div><span class="tag">06. 담화 표지 / 대화 조절</span><h2 class="title">대화의 <span>호흡과 조율</span></h2></div>
+    <div class="list-container">
+      <div class="item"><div class="item-header">25. 시간 벌기 (Filler word)</div><div class="item-ex">"거시기... 내가 하려던 말이 뭐였더라?"</div><div class="item-desc">↳ 음..., 저기..., 있잖아...</div></div>
+      <div class="item"><div class="item-header">26. 발화권 유지 (Turn-holding)</div><div class="item-ex">"거시기, 그러니까 내 말은, 거시기..."</div><div class="item-desc">↳ 침묵으로 인한 대화 주도권 상실 방지</div></div>
+      <div class="item"><div class="item-header">27. 주의 환기 / 호출</div><div class="item-ex">"거시기, 자네 이리 와서 이것 좀 보게"</div><div class="item-desc">↳ 여보게, 저기요, 이봐</div></div>
+      <div class="item"><div class="item-header">28. 맞장구 / 공감</div><div class="item-ex">"아따, 거 참 거시기하구먼!"</div><div class="item-desc">↳ 그러게 말이다, 참 난감하네</div></div>
+      <div class="item"><div class="item-header">29. 문장 연결</div><div class="item-ex">"밥 먹고, 거시기해서, 바로 출발하자"</div><div class="item-desc">↳ 그러고 나서, 정리되는 대로</div></div>
+      <div class="item"><div class="item-header">30. 대화 종결 / 체념</div><div class="item-ex">"에라, 아무튼 그냥 거시기다, 거시기"</div><div class="item-desc">↳ 될 대로 되라, 그쯤 해두자</div></div>
+      <div class="item"><div class="item-header">31. 되묻기 (확인)</div><div class="item-ex">"응? 뭐라고? 방금 거시기가 어쨌다고?"</div><div class="item-desc">↳ 다시 말해봐, 방금 그 말이</div></div>
+    </div>
+    <div class="footer"><span>DISCOURSE MARKERS</span><span>06 / 11</span></div>
+  </div>
+
+  <!-- CARD 07 -->
+  <div class="card" id="card-7">
+    <div><span class="tag">07. 사회적 화용 기제</span><h2 class="title">체면을 지키는 <span>처세술</span></h2></div>
+    <div class="list-container" style="gap: 3px;">
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">32. 거절 / 난색 표명</div><div class="item-ex">"아, 이번 부탁은 내가 참 거시기허네"</div><div class="item-desc">↳ 곤란하다, 들어주기 어렵다</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">33. 신체·성적 은어</div><div class="item-ex">"바지 앞춮 거시기 쪽에 뭐가 묻었다"</div><div class="item-desc">↳ 특정 신체 부위, 성기</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">34. 욕설·비난 순화</div><div class="item-ex">"아오, 저 거시기한 놈 진짜 말 안 듣네"</div><div class="item-desc">↳ 얄미운, 빌어먹을, 괘씸한</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">35. 칭찬의 완곡화</div><div class="item-ex">"자네 이번에 솜씨가 아주 참 거시기하구먼!"</div><div class="item-desc">↳ 대단하다, 훌륭하다</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">36. 면피 / 책임 회피</div><div class="item-ex">"그건 팀장님이랑 알아서 거시기한 걸로 합시다"</div><div class="item-desc">↳ 결정하다, 조율하다</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">37. 행동 유예 (시간 끌기)</div><div class="item-ex">"그건 나중에 분위기 봐서 슬슬 거시기하자"</div><div class="item-desc">↳ 천천히 결정하자, 미루자</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">38. 침묵 담합</div><div class="item-ex">"(눈 마주치며) 그건 그냥 거시기한 걸로 하자"</div><div class="item-desc">↳ 덮어두자, 없던 일로 하자</div></div>
+      <div class="item" style="padding: 4px 8px;"><div class="item-header">39. 법적·도덕적 미완결</div><div class="item-ex">"내가 굳이 입 밖으로 거시기하진 않겠네만..."</div><div class="item-desc">↳ 고발하다, 폭로하다 (경고)</div></div>
+    </div>
+    <div class="footer"><span>PRAGMATICS</span><span>07 / 11</span></div>
+  </div>
+
+  <!-- CARD 08 -->
+  <div class="card" id="card-8">
+    <div><span class="tag">08. 상호작용 / 심리</span><h2 class="title">암묵지와 <span>인지 최적화</span></h2></div>
+    <div class="list-container">
+      <div class="item"><div class="item-header">40. 암묵지 강요</div><div class="item-ex">"자네는 내가 뭘 거시기하라는지 감이 안 오나?"</div><div class="item-desc">↳ 요구·지시 사항 알아서 판단</div></div>
+      <div class="item"><div class="item-header">41. 내집단 식별 (Shibboleth)</div><div class="item-ex">"자네, 그때 그 거시기 뜻을 알겄는가?"</div><div class="item-desc">↳ 내부자 암묵지 공유 확인</div></div>
+      <div class="item"><div class="item-header">42. 동조 유도 (Backchannel)</div><div class="item-ex">"알제? 우리 그때 그거, 참 거시기했잖여"</div><div class="item-desc">↳ '맞지?' 동조 강제</div></div>
+      <div class="item"><div class="item-header">43. 인지 부하 차단 (Load Shedding)</div><div class="item-ex">"공식에서 분모에 거시기를 넣고 미분하면..."</div><div class="item-desc">↳ 변수 생략 (뇌 연산 집중)</div></div>
+      <div class="item"><div class="item-header">44. 능청스런 언어유희</div><div class="item-ex">"내가 널 얼마나 거시기하는지 알기나 하냐?"</div><div class="item-desc">↳ 사랑하는지, 아끼는지 (고백)</div></div>
+      <div class="item"><div class="item-header">45. 단답형 상황 요약</div><div class="item-ex">"(어떻게 됐어? 물음에) ...거시기혔다"</div><div class="item-desc">↳ 망했다 / 해결됐다 (한숨/표정)</div></div>
+    </div>
+    <div class="footer"><span>INTERACTION & PSYCHOLOGY</span><span>08 / 11</span></div>
+  </div>
+
+  <!-- CARD 09 -->
+  <div class="card" id="card-9">
+    <div><span class="tag">09. 특수 / 극단 용법</span><h2 class="title">언어의 <span>경계를 넘어</span></h2></div>
+    <div class="list-container">
+      <div class="item" style="padding: 7px 9px;"><div class="item-header">46. 제스처 위임</div><div class="item-ex">"(턱을 치켜들며) 야, 저기 저 거시기..."</div><div class="item-desc">↳ 턱짓이 가리키는 대상</div></div>
+      <div class="item" style="padding: 7px 9px;"><div class="item-header">47. 고유명사 접두·접미</div><div class="item-ex">"거시기 정형외과", "거시기 과장"</div><div class="item-desc">↳ 특정 병원, 직급만 아는 인물</div></div>
+      <div class="item" style="padding: 7px 9px;"><div class="item-header">48. 자기 참조 (Recursive)</div><div class="item-ex">"그 왜 있잖아, 그 거시기 있잖여, 거시기!"</div><div class="item-desc">↳ '거시기'라는 단어 자체</div></div>
+      <div class="item" style="padding: 7px 9px;"><div class="item-header">49. 초극단 맥락어</div><div class="item-ex">"거시기가 거시기를 거시기혀서 거시기하냐?"</div><div class="item-desc">↳ 전 문장 성분의 완전 대체</div></div>
+      <div class="item" style="padding: 7px 9px;"><div class="item-header">50. 노동요 / 여음구</div><div class="item-ex">"얼씨구 절씨구 거시기 들어간다~"</div><div class="item-desc">↳ 박자 및 흥 돋우기</div></div>
+    </div>
+    <div class="footer"><span>EDGE CASES</span><span>09 / 11</span></div>
+  </div>
+
+  <!-- CARD 10 -->
+  <div class="card" id="card-10">
+    <div><span class="tag">SPECIAL ANALYSIS</span><h2 class="title">전설의 문장 <span>디코딩</span></h2></div>
+    <div class="item" style="border-color: #38BDF8; background: rgba(56,189,248,0.06); text-align: center; padding: 16px 8px;">
+      <div style="font-size: 15px; font-weight: 700; color: #38BDF8; line-height: 1.4;">"거시기가 거시기를<br>거시기혀서 거시기하냐?"</div>
+    </div>
+    <div class="item" style="padding: 12px 10px;">
+      <div class="item-header" style="margin-bottom: 6px;">역연산 디코딩 매핑</div>
+      <div class="item-ex" style="margin-bottom: 3px;">• 거시기가 ──▶ 그 사람이 (주어)</div>
+      <div class="item-ex" style="margin-bottom: 3px;">• 거시기를 ──▶ 그 일을 (목적어)</div>
+      <div class="item-ex" style="margin-bottom: 3px;">• 거시기혀서 ──▶ 그따위로 처리해서 (동사)</div>
+      <div class="item-ex">• 거시기하냐? ──▶ 기분이 상했느냐? (형용사)</div>
+    </div>
+    <div class="item" style="padding: 10px; font-size: 11.5px; line-height: 1.5; color: #94A3B8;">
+      화자와 청자의 물리적 시공간과 암묵지 공유도가 100%일 때 완성되는 한국어만의 초압축 통신 구조입니다.
+    </div>
+    <div class="footer"><span>DECODING MODEL</span><span>10 / 11</span></div>
+  </div>
+
+  <!-- CARD 11 -->
+  <div class="card" id="card-11">
+    <div><span class="tag">CONCLUSION</span><h2 class="title">단어가 아닌 <span>'포인터(Pointer)'</span></h2></div>
+    <div class="item" style="border-color: #38BDF8; background: rgba(56,189,248,0.06); padding: 18px 12px;">
+      <div style="font-size: 13px; font-weight: 700; color: #38BDF8; margin-bottom: 6px;">ARCHIVE SUMMARY</div>
+      <div style="font-size: 12.5px; line-height: 1.6; color: #F1F5F9;">
+        거시기는 사전 속 고정된 뜻에 갇히지 않고, 둘 사이에 공유된 맥락의 주소를 즉시 가리키는 <b>한국어의 와일드카드</b>입니다.
+      </div>
+    </div>
+    <div class="item" style="padding: 14px 12px; font-size: 12px; line-height: 1.6; color: #94A3B8;">
+      • 50개 전수 용법으로 입증된 초맥락성<br>
+      • 8대 품사를 넘나드는 언어적 유연성<br>
+      • 표정과 침묵까지 치환하는 완전한 그릇
+    </div>
+    <div class="footer"><span>ARCHIVE COMPLETED</span><span>11 / 11</span></div>
+  </div>
+
+  <script>
+    async function downloadAllCards() {
+      const btn = document.querySelector('.btn-download');
+      btn.innerText = "⏳ 캡처 및 다운로드 진행 중...";
+      btn.disabled = true;
+
+      for (let i = 1; i <= 11; i++) {
+        const cardEl = document.getElementById(`card-${i}`);
+        const canvas = await html2canvas(cardEl, {
+          scale: 2, // 2배 해상도로 선명하게 캡처
+          backgroundColor: null,
+          useCORS: true
+        });
+        
+        const link = document.createElement('a');
+        link.download = `card_${String(i).padStart(2, '0')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        await new Promise(r => setTimeout(r, 600)); // 다운로드 간격 대기
+      }
+
+      btn.innerText = "✅ 11장 다운로드 완료!";
+      setTimeout(() => {
+        btn.innerText = "📸 11장 이미지 일괄 다운로드 (PNG)";
+        btn.disabled = false;
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
